@@ -95,11 +95,25 @@ class Bank:
     def __init__(self):
         self._customers = {}
         self._accounts = {}
+
+    def _is_valid_customer_id(self, customer_id):
+        if not customer_id:  # Check if the ID is empty
+            return False
+        for char in customer_id:
+            if not (char.isalnum() or char == '_'):
+                return False
+        return True
+
     def add_customer(self, customer):
+        if not self._is_valid_customer_id(customer.customer_id):
+            print("Error: Customer ID must be alphanumeric and can include underscores.")
+            return False
+            
         if customer.customer_id not in self._customers:
             self._customers[customer.customer_id] = customer
             return True
         return False
+        
     def remove_customer(self, customer_id):
         if customer_id in self._customers and not self._customers[customer_id].account_numbers:
             del self._customers[customer_id]
@@ -161,7 +175,7 @@ while True:
     print("6. View Customer Accounts")
     print("7. Apply Interest")
     print("8. Display All Customers")
-    print("9. Exit") 
+    print("9. Exit")    
 
     choice = input("Enter your choice: ")
 
@@ -172,8 +186,8 @@ while True:
         if bank.add_customer(Customer(cid, name, addr)):
             print("Customer added.")
         else:
-            print("Customer ID already exists.")
-    
+            print("Failed to add customer (ID might be invalid or already exists).")
+            
     elif choice == '2':
         cid = input("Enter customer ID: ")
         atype = input("Enter account type (savings/checking): ").lower()
@@ -201,7 +215,7 @@ while True:
         print(f"\nAccounts for Customer ID {cid}:")
         for i, acc in enumerate(customer_accounts):
             print(f"{i+1}. {acc.display_details()}")
-        
+            
         acc_choice = input("Select account number (from list above): ")
         try:
             acc_idx = int(acc_choice) - 1
@@ -246,11 +260,11 @@ while True:
         bank.apply_all_interest()
         print("Interest applied to all savings accounts.")
 
-    elif choice == '8': 
+    elif choice == '8':    
         print("\nAll Customers:")
         bank.display_all_customers()
 
-    elif choice == '9': 
+    elif choice == '9':    
         print("Exiting Banking System...")
         break
 
